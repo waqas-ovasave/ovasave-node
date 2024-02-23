@@ -29,6 +29,11 @@ export class AuthService {
       throw new NotFoundException('Invalid credentials');
     }
 
+    // Check if user is verified
+    if (!user.IsVerified) {
+      throw new UnauthorizedException('User is not verified');
+    }
+
     // Compare the provided password with the hashed password stored in the database
     const passwordMatch = await compare(password, user.password);
 

@@ -11,7 +11,13 @@ import { ErrorHandlingService } from 'src/error-handling/error-handling.service'
 import { PaginationService } from 'src/pagination/pagination.service';
 import { hash } from 'bcrypt';
 import { EmailService } from 'src/email/email.service';
-import { generateResetToken } from 'src/helper-functions/helper-functions';
+import {
+  calculateOTPExpiry,
+  generateOTP,
+  generateResetToken,
+} from 'src/helper-functions/helper-functions';
+import { HttpStatus } from '@nestjs/common';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Injectable()
 export class UserService extends BaseService<User> {
@@ -20,17 +26,79 @@ export class UserService extends BaseService<User> {
     private readonly userRepository: Repository<User>,
     protected readonly errorHandlingService: ErrorHandlingService,
     protected readonly paginationService: PaginationService,
-    protected readonly emailService: EmailService,
+    protected readonly emailService: EmailService, 
+    private readonly twilioService: TwilioService,
   ) {
     super(userRepository, errorHandlingService); // Calling the super constructor with the injected repository
   }
 
   async registerUser(userData) {
+    // Generate OTP using the helper function
+    const otp = generateOTP();
+    userData.otp = otp;
+    userData.otpExpiration = new Date(new Date().getTime());
     userData.password = await hash(userData.password, 10);
     const result = await super.create(userData);
+    if (result.data?.id) {
+      // Use custom Twilio service to send the message
+      const mesageSent = await this.twilioService.sendMessage(
+        `Your verification code is: ${otp}`,
+        process.env.TWILIO_PHONE_NUMBER, // Twilio phone number to send the message
+        userData.phoneNumber, // User's phone number
+      );
+      if (mesageSent === true) {
+        const data = {
+          message: 'OTP is sent to your registered mobile number',
+          status: HttpStatus.OK,
+          success: true,
+        };
+        return data;
+      } else {
+        // If message sending fails, delete the user
+        await super.delete(result.data.id);
+        return this.errorHandlingService.handle({
+          message: 'Failed to send verification code',
+          statusCode: HttpStatus.NOT_FOUND,
+          success: false,
+        });
+      }
+    }
     return result;
   }
 
+  // otp verification
+  async verificationOTP(OTP) {
+    const result = await super.findSingle({ otp: OTP.otp });
+    if (result && result.data && result.data.otpExpiration) {
+      const { minutes, isExpired } = calculateOTPExpiry(
+        result.data.otpExpiration,
+      );
+      if (isExpired) {
+        // OTP has expired
+        return this.errorHandlingService.handle({
+          message: 'OTP expired',
+          statusCode: HttpStatus.GONE,
+          success: false,
+        });
+      }
+      const verified = await super.update(result.data.id, { IsVerified: true });
+      if (verified.success) {
+        // OTP verification is successful
+        return {
+          statusCode: HttpStatus.OK,
+          success: true,
+          message: 'OTP verification is successful',
+        };
+      }
+    } else {
+      // OTP not found or expired
+      return this.errorHandlingService.handle({
+        message: 'you have entered wrong OTP',
+        statusCode: HttpStatus.NOT_FOUND,
+        success: false,
+      });
+    }
+  }
   async findAllData(queryParams) {
     const result = await super.findAll();
     const newResult = this.paginationService.paginate(result, queryParams);

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ErrorHandlingService } from '../error-handling/error-handling.service';
 import { PaginationService } from 'src/pagination/pagination.service';
 import { EmailService } from 'src/email/email.service';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -15,6 +16,7 @@ import { EmailService } from 'src/email/email.service';
     ErrorHandlingService,
     PaginationService,
     EmailService,
+    TwilioService,
   ],
   exports: [TypeOrmModule, UserService],
 })

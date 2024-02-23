@@ -34,6 +34,19 @@ export class User {
   @Column({ name: 'PHONE_NUMBER', nullable: true })
   phoneNumber: string;
 
+  @Column({ name: 'OTP', nullable: true })
+  otp: string | null;
+
+  @Column({
+    name: 'OTP_EXPIRATION',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  otpExpiration: Date | null;
+
+  @Column({ name: 'IS_VERIFIED', default: false })
+  IsVerified: boolean;
+
   @Column({ name: 'RESET_TOKEN', nullable: true })
   resetToken: string | null;
 

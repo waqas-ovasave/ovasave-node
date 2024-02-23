@@ -29,6 +29,11 @@ export class UserController {
     return this.userService.registerUser(userData);
   }
 
+  @Post('verify-otp') // verify otp to complete the sign-up process
+  verifyOTP(@Body() OTP) {
+    return this.userService.verificationOTP(OTP);
+  }
+
   //get all records
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RoleGuard)
