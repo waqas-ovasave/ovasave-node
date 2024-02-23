@@ -1,0 +1,317 @@
+{
+	"info": {
+		"_postman_id": "c2344dbc-1f43-4f33-9223-af3e6397fe07",
+		"name": "ovasave-node",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "31636617"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "sign-in user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should have a token\", function () {\r",
+									"    if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        // Set the token in the \"access_token\" variable of the \"ovasave-env\" environment\r",
+									"        pm.environment.set(\"access_token\", jsonData.token, \"ovasave-env\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"adtsssqdsssdiesdssddddsssddsjjjdddsssdkadvdsd35464@huizk.com\",\r\n    \"password\":\"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "sign-in admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should have a token\", function () {\r",
+									"    if (pm.response.code === 200 || pm.response.code === 201) {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        // Set the token in the \"access_token\" variable of the \"ovasave-env\" environment\r",
+									"        pm.environment.set(\"access_token\", jsonData.token, \"ovasave-env\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"aqikadv35464@huizk.com\",\r\n    \"password\":\"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "sign-up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"admin\",\r\n    \"lastName\": \"ahmed\",\r\n    \"dateOfBirth\": \"2024-02-20T07:21:54.000Z\",\r\n    \"email\": \"adtsssqdsssdiesdssddddsssddsjjjdddsssdkadvdsd35464@huizk.com\",\r\n    \"password\":\"12345678\",\r\n    \"phoneNumber\": \"+923163335891\",\r\n    \"role\":\"user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/user/sign-up"
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"otp\":\"9fdRQn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/user/verify-otp"
+					},
+					"response": []
+				},
+				{
+					"name": "password-reset-request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"email\": \"jikav35464@huizk.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/user/password-reset"
+					},
+					"response": []
+				},
+				{
+					"name": "pasword-reset",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/user/password-reset/3d5b50b91a9e059ff12e93a7f2f32ae4e66b581c"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/all-users?page=2&limit=1&sort=email:desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"all-users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "sort",
+									"value": "email:desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-dp",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Dev/Pictures/gossip-girls.png"
+								},
+								{
+									"key": "email",
+									"value": "abc.gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/user/update-dp/4"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"aaaaa\",\r\n    \"lastName\": \"ahmed\",\r\n    \"dateOfBirth\": \"2024-02-20T07:21:54.000Z\",\r\n    \"email\": \"new.gmail.com\",\r\n    \"phoneNumber\": \"0302148498\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/user/4"
+					},
+					"response": []
+				},
+				{
+					"name": "find-one",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/user/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{base_url}}/user/4"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
