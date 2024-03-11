@@ -11,6 +11,7 @@ import { PaginationService } from './pagination/pagination.service';
 import { EmailService } from './email/email.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { ContactUsModule } from './contact-us/contact-us.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     DatabaseModule,
     MulterModule.register(),
     SubscriptionModule,
+    ContactUsModule,
   ],
   controllers: [AppController],
   providers: [
