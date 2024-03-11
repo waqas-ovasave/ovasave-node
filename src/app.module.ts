@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { PaginationService } from './pagination/pagination.service';
 import { EmailService } from './email/email.service';
 import { MulterModule } from '@nestjs/platform-express';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MulterModule } from '@nestjs/platform-express';
     UserModule,
     DatabaseModule,
     MulterModule.register(),
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [
