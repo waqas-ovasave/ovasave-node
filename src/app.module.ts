@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { PaginationService } from './pagination/pagination.service';
 import { EmailService } from './email/email.service';
 import { MulterModule } from '@nestjs/platform-express';
+import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
 
@@ -22,6 +23,7 @@ import { ContactUsModule } from './contact-us/contact-us.module';
     UserModule,
     DatabaseModule,
     MulterModule.register(),
+    PaymentModule,
     SubscriptionModule,
     ContactUsModule,
   ],
