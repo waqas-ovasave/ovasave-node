@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  Get,
-  Req,
-  Res,
-  Query,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -16,7 +6,6 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('stripe/checkout')
   handleWebhookEvent(@Body() paymentReq) {
     return this.paymentService.create(paymentReq);
@@ -24,9 +13,17 @@ export class PaymentController {
 
   @UseGuards(JwtAuthGuard)
   @Post('success')
-  async handlePaymentSuccess(@Body() body, @Request() req) {
+  async handlePaymentSuccessUser(@Body() body, @Request() req) {
     const sessionId = body.sessionId;
     const userId = req.user.userId;
+    return this.paymentService.verifyPayment(sessionId, userId);
+  }
+
+  // for guest users only
+  @Post('success-guest')
+  async handlePaymentSuccessGuestUser(@Body() body) {
+    const sessionId = body.sessionId;
+    const userId = 0;
     return this.paymentService.verifyPayment(sessionId, userId);
   }
 }
