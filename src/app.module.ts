@@ -13,6 +13,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
+import { ClinicsModule } from './clinics/clinics.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ContactUsModule } from './contact-us/contact-us.module';
     PaymentModule,
     SubscriptionModule,
     ContactUsModule,
+    ClinicsModule,
   ],
   controllers: [AppController],
   providers: [
