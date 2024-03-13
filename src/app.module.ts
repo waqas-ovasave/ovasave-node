@@ -14,6 +14,7 @@ import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
 import { ClinicsModule } from './clinics/clinics.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ClinicsModule } from './clinics/clinics.module';
     SubscriptionModule,
     ContactUsModule,
     ClinicsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
