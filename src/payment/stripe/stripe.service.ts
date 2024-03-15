@@ -5,6 +5,8 @@ import { DeepPartial, Repository } from 'typeorm';
 import { Orders } from '../entities/payment.entity';
 import { BaseService } from 'src/baseservice/base.service';
 import { ErrorHandlingService } from 'src/error-handling/error-handling.service';
+import { UserService } from 'src/user/user.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class StripeService extends BaseService<Orders> {
@@ -14,6 +16,8 @@ export class StripeService extends BaseService<Orders> {
     @InjectRepository(Orders)
     private readonly paymentRepository: Repository<Orders>,
     protected readonly errorHandlingService: ErrorHandlingService,
+    private readonly userService: UserService,
+    protected readonly emailService: EmailService,
   ) {
     super(paymentRepository, errorHandlingService);
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -101,7 +105,16 @@ export class StripeService extends BaseService<Orders> {
           customerDetails: JSON.stringify(customerDetails), //we do strigigy here to save another object in DB , to access that from front-end, parse it
         };
         try {
-          return await super.create(payment); //if paymnet data is saved to DB
+          const result = await super.create(payment); //if paymnet data is saved to DB
+          const userEmail = await this.userService.findOneData(userId);
+          const email = userEmail?.data?.email;
+
+          await this.emailService.sendEmail(
+            email,
+            'Payment Confirmation',
+            `Your payment of ${amount} ${currency} has been successfully processed against order id of ${result?.data?.id}.`,
+          );
+          return result;
         } catch (dbError) {
           // Handle the error and return appropriate response
           return this.errorHandlingService.handle({
@@ -118,6 +131,20 @@ export class StripeService extends BaseService<Orders> {
     } catch (error) {
       return this.errorHandlingService.handle({
         message: error.message,
+        success: false,
+      });
+    }
+  }
+
+  // guest flow
+  async createUSer(createUserBeforePayment) {
+    const result = await this.userService.registerUser(createUserBeforePayment);
+    if (result?.success === true) {
+      const newResult = await this.checkOut(createUserBeforePayment);
+      return { ...newResult, userId: result?.data?.id };
+    } else {
+      return this.errorHandlingService.handle({
+        message: result?.message,
         success: false,
       });
     }
