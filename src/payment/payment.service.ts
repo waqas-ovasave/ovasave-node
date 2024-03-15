@@ -8,6 +8,9 @@ export class PaymentService {
   async create(paymentReq) {
     return await this.stripeService.checkOut(paymentReq);
   }
+  async guestUser(createUserBeforePayment) {
+    return await this.stripeService.createUSer(createUserBeforePayment);
+  }
   async verifyPayment(sessionId, userId) {
     // Verify the payment intent using the session ID
     return await this.stripeService.verifyPaymentIntent(sessionId, userId);
